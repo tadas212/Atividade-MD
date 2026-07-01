@@ -1,13 +1,22 @@
-# Verificação de Programas
+# Verificação de Programas com Assertivas
 
 **Disciplina:** Verificação de Programas  
 **Professor:** Edjard Mota
 
-## Objetivo
+## Integrantes
 
-Este trabalho tem como objetivo aplicar técnicas de verificação formal utilizando assertivas em Python para verificar propriedades de correção e terminação de algoritmos.
+- Nome 1
+- Nome 2
+- Nome 3
+- Nome 4
 
-Foram analisados dois programas contendo erros propositais. Em ambos os casos foram adicionadas assertivas para verificar:
+---
+
+# Objetivo
+
+Este trabalho tem como objetivo aplicar conceitos de Verificação de Programas estudados na disciplina, utilizando assertivas para verificar automaticamente propriedades de correção e terminação de algoritmos.
+
+Para cada problema foram adicionadas verificações referentes a:
 
 - Pré-condição;
 - Inicialização do invariante;
@@ -15,77 +24,84 @@ Foram analisados dois programas contendo erros propositais. Em ambos os casos fo
 - Função variante;
 - Pós-condição.
 
-A execução dos testes permitiu identificar automaticamente as falhas presentes em cada algoritmo.
+Após a instrumentação dos algoritmos, foram executados casos de teste para identificar e localizar os erros presentes nos programas originais.
 
 ---
 
-# Problema 6 – Busca do Maior Divisor Próprio
+# Estrutura do Projeto
 
-## Especificação
+```
+Projeto/
+
+├── problema6.py
+├── ProblemaAlternativo.py
+└── README.md
+```
+
+---
+
+# Problema 6 — Busca do Maior Divisor Próprio
+
+## Descrição do Problema
+
+O objetivo deste algoritmo é encontrar o maior divisor próprio de um número inteiro positivo.
+
+Um divisor próprio de um número n é qualquer divisor positivo menor que n.
+
+Exemplos:
+
+| n | Maior divisor próprio |
+|---|---|
+| 8 | 4 |
+| 9 | 3 |
+| 15 | 5 |
+| 25 | 5 |
+
+---
+
+## Especificação Formal
 
 ### Pré-condição
 
-O algoritmo aceita apenas números inteiros positivos.
+O algoritmo só aceita valores inteiros positivos.
 
 ```
 n > 0
 ```
 
-### Resultado esperado
+### Pós-condição
 
-A função deve retornar o maior divisor próprio de `n`, ou seja, o maior número menor que `n` que divide `n` sem deixar resto.
+O resultado retornado deve satisfazer simultaneamente:
 
-Exemplos:
+```
+resultado < n
+```
 
-| Entrada | Resultado Esperado |
-|----------|----------|
-| n = 8 | 4 |
-| n = 9 | 3 |
-| n = 15 | 5 |
+e
+
+```
+n % resultado = 0
+```
+
+Ou seja, o valor retornado deve ser um divisor próprio de n.
 
 ---
 
-## Assertivas Inseridas
-
-### 1. Pré-condição
-
-Verifica se a entrada recebida é válida.
-
-```python
-assert n > 0
-```
-
-### 2. Inicialização do Invariante
+## Invariante de Loop
 
 Foi utilizado o seguinte invariante:
 
 ```
-0 <= d < n
+0 < d < n
 ```
 
-Após a inicialização:
+onde d representa o candidato atual a maior divisor próprio.
 
-```python
-d = n - 1
-```
+O invariante garante que durante toda a execução do laço o valor de d permanece válido para a busca.
 
-o invariante deve ser verdadeiro.
+---
 
-Assertiva utilizada:
-
-```python
-assert 0 <= d < n
-```
-
-### 3. Manutenção do Invariante
-
-Ao final de cada repetição do laço verifica-se se o valor de `d` continua satisfazendo o invariante.
-
-```python
-assert 0 <= d < n
-```
-
-### 4. Função Variante
+## Função Variante
 
 A função variante escolhida foi:
 
@@ -93,13 +109,65 @@ A função variante escolhida foi:
 V(state) = d
 ```
 
-Foram verificadas duas propriedades.
+Essa função mede o progresso do algoritmo.
 
-#### Limite inferior
+A cada repetição do laço o valor de d deveria diminuir em uma unidade.
+
+Como d é um número natural limitado inferiormente por 0, sua redução contínua garante que o laço eventualmente termine.
+
+---
+
+## Assertivas Inseridas
+
+### 1. Pré-condição
+
+Verifica se a entrada é válida.
+
+```python
+assert n > 0
+```
+
+---
+
+### 2. Inicialização do Invariante
+
+Após a atribuição:
+
+```python
+d = n - 1
+```
+
+deve ser verdadeiro que:
+
+```python
+assert 0 < d < n
+```
+
+Isso garante que o invariante é válido antes da primeira iteração.
+
+---
+
+### 3. Manutenção do Invariante
+
+Ao final de cada iteração é verificado se o invariante continua verdadeiro.
+
+```python
+assert 0 < d < n
+```
+
+---
+
+### 4. Função Variante
+
+São verificadas duas propriedades.
+
+#### Limite Inferior
 
 ```python
 assert velha_variante >= 0
 ```
+
+Garante que a variante nunca assume valores negativos.
 
 #### Decremento
 
@@ -107,13 +175,19 @@ assert velha_variante >= 0
 assert d < velha_variante
 ```
 
+Garante que existe progresso em direção à condição de parada.
+
+---
+
 ### 5. Pós-condição
 
-Ao término da execução verifica-se se o valor retornado é realmente um divisor próprio de `n`.
+Quando um resultado é encontrado, verifica-se:
 
 ```python
 assert resultado < n and n % resultado == 0
 ```
+
+Garantindo que o valor retornado realmente satisfaz a especificação.
 
 ---
 
@@ -129,13 +203,49 @@ assert resultado < n and n % resultado == 0
 
 ## Resultado da Execução
 
-### Entrada
+### Caso 1
+
+Entrada:
+
+```
+n = 8
+```
+
+Resultado:
+
+```
+AssertionError:
+Erro: Loop em execucao infinita (sem progresso)!
+```
+
+---
+
+### Caso 2
+
+Entrada:
 
 ```
 n = 9
 ```
 
-### Resultado
+Resultado:
+
+```
+AssertionError:
+Erro: Loop em execucao infinita (sem progresso)!
+```
+
+---
+
+### Caso 3
+
+Entrada:
+
+```
+n = 15
+```
+
+Resultado:
 
 ```
 AssertionError:
@@ -152,85 +262,114 @@ A primeira assertiva que falha é:
 assert d < velha_variante
 ```
 
-correspondente à verificação da função variante.
+responsável pela verificação do progresso da função variante.
 
-Quando `n % d != 0`, o algoritmo deveria executar:
+O algoritmo deveria executar:
 
 ```python
 d = d - 1
 ```
 
-Entretanto, essa instrução foi removida do programa.
+sempre que o valor atual de d não fosse divisor de n.
 
-Dessa forma, o valor de `d` permanece constante entre duas iterações consecutivas, impedindo o progresso do laço.
+Entretanto, essa instrução foi removida do código.
+
+Como consequência, o valor de d permanece constante.
 
 ---
 
-## Razão da Falha
+## Demonstração da Falha
 
-A função variante escolhida foi:
-
-```
-V(state) = d
-```
-
-Para garantir a terminação do algoritmo, a variante deve diminuir estritamente a cada repetição.
-
-Como o valor de `d` permanece inalterado, temos:
+Considere a entrada:
 
 ```
-V(novo estado) = V(estado anterior)
+n = 9
 ```
 
-Logo, a propriedade de progresso é violada.
+Inicialmente:
 
-A assertiva detecta essa situação e interrompe a execução, evitando um possível loop infinito.
+```
+d = 8
+```
+
+Temos:
+
+```
+9 % 8 ≠ 0
+```
+
+Portanto o algoritmo deveria reduzir d.
+
+Entretanto, o decremento não acontece.
+
+Na próxima iteração:
+
+```
+d = 8
+```
+
+novamente.
+
+Logo:
+
+```
+V(state atual) = 8
+V(próximo estado) = 8
+```
+
+Mas a definição da variante exige:
+
+```
+V(próximo estado) < V(state atual)
+```
+
+Temos então:
+
+```
+8 < 8
+```
+
+o que é falso.
+
+Por isso a assertiva dispara um erro.
+
+---
+
+## Razão Matemática do Bug
+
+A função variante foi escolhida justamente para demonstrar que o laço está se aproximando de sua condição de parada.
+
+Quando uma variante deixa de diminuir, perde-se a garantia de terminação.
+
+Assim, embora o algoritmo continue satisfazendo o invariante, ele deixa de satisfazer a propriedade de progresso.
+
+O erro encontrado é, portanto, um erro de terminação e não um erro de correção.
 
 ---
 
 ## Conclusão
 
-A utilização de assertivas permitiu verificar automaticamente propriedades importantes do algoritmo.
+As assertivas permitiram verificar automaticamente propriedades importantes do algoritmo.
 
-A falha encontrada está relacionada à terminação do programa. A ausência do decremento da variável `d` impede a redução da função variante e faz com que o algoritmo deixe de satisfazer as condições necessárias para garantir o término do laço.
+A falha identificada ocorre porque a função variante deixa de diminuir devido à ausência do comando de decremento da variável d.
 
----
-
-# Problema Alternativo – Soma dos Primeiros N Naturais
-
-## Objetivo
-
-Este problema tem como objetivo verificar a corretude de um algoritmo que calcula a soma dos primeiros números naturais utilizando assertivas em Python.
-
-Foram inseridas verificações de:
-
-- Pré-condição;
-- Inicialização do invariante;
-- Manutenção do invariante;
-- Função variante;
-- Pós-condição.
+Dessa forma, o algoritmo perde sua garantia de terminação e pode entrar em execução infinita.
 
 ---
 
-## Especificação
+# Problema Alternativo — Soma dos Primeiros N Naturais
 
-### Pré-condição
+## Descrição do Problema
 
-O algoritmo aceita apenas números inteiros não negativos.
+O objetivo do algoritmo é calcular a soma dos primeiros n números naturais.
 
-```
-n >= 0
-```
-
-### Resultado esperado
-
-A função deve calcular:
+Matematicamente:
 
 ```
 1 + 2 + 3 + ... + n
 ```
 
-que pode ser representado pela fórmula:
+cujo resultado é dado por:
 
 ```
 n(n + 1)
@@ -240,54 +379,71 @@ n(n + 1)
 
 ---
 
-## Assertivas Inseridas
+## Especificação Formal
 
-### 1. Pré-condição
+### Pré-condição
 
-Verifica se o valor recebido é válido.
-
-```python
-assert n >= 0
+```
+n >= 0
 ```
 
-### 2. Inicialização do Invariante
+---
+
+### Pós-condição
+
+Ao término da execução deve ser verdadeiro que:
+
+```
+s = n(n + 1)/2
+```
+
+---
+
+## Invariante de Loop
 
 Foi utilizado o seguinte invariante:
 
 ```
-s = i(i + 1) / 2
+0 <= i <= n
 ```
 
-Inicialmente:
+e
 
-```python
-s = 0
+```
+s = i(i + 1)/2
+```
+
+onde:
+
+- i representa a quantidade de números já processados;
+- s representa a soma acumulada.
+
+---
+
+## Justificativa do Invariante
+
+Antes de iniciar o laço:
+
+```
 i = 0
+s = 0
 ```
 
-Como:
+Logo:
 
 ```
-0(0 + 1)/2 = 0
+s = 0(0 + 1)/2
 ```
 
-o invariante é verdadeiro.
-
-Assertiva utilizada:
-
-```python
-assert 0 <= i <= n and s == i * (i + 1) // 2
+```
+s = 0
 ```
 
-### 3. Manutenção do Invariante
+Portanto o invariante é verdadeiro inicialmente.
 
-Ao final de cada repetição do laço é verificado se o invariante continua válido.
+---
 
-```python
-assert 0 <= i <= n and s == i * (i + 1) // 2
-```
-
-### 4. Função Variante
+## Função Variante
 
 A função variante escolhida foi:
 
@@ -295,9 +451,49 @@ A função variante escolhida foi:
 V(state) = n - i
 ```
 
-Foram verificadas duas propriedades.
+Ela representa quantas iterações ainda faltam para o término do algoritmo.
 
-#### Limite inferior
+A cada repetição do laço o valor de i aumenta em uma unidade.
+
+Consequentemente:
+
+```
+n - i
+```
+
+diminui continuamente até atingir zero.
+
+---
+
+## Assertivas Inseridas
+
+### 1. Pré-condição
+
+```python
+assert n >= 0
+```
+
+---
+
+### 2. Inicialização do Invariante
+
+```python
+assert 0 <= i <= n and s == i * (i + 1) // 2
+```
+
+---
+
+### 3. Manutenção do Invariante
+
+```python
+assert 0 <= i <= n and s == i * (i + 1) // 2
+```
+
+---
+
+### 4. Função Variante
+
+#### Limite Inferior
 
 ```python
 assert velha_variante >= 0
@@ -309,9 +505,9 @@ assert velha_variante >= 0
 assert (n - i) < velha_variante
 ```
 
-### 5. Pós-condição
+---
 
-Ao final da execução verifica-se se o resultado corresponde à especificação matemática.
+### 5. Pós-condição
 
 ```python
 assert s == n * (n + 1) // 2
@@ -331,13 +527,48 @@ assert s == n * (n + 1) // 2
 
 ## Resultado da Execução
 
-### Entrada
+### Caso 1
+
+Entrada:
+
+```
+n = 0
+```
+
+Resultado:
+
+```
+Nenhuma assertiva falhou.
+```
+
+---
+
+### Caso 2
+
+Entrada:
+
+```
+n = 1
+```
+
+Resultado:
+
+```
+AssertionError:
+Erro: Invariante violado no corpo do loop!
+```
+
+---
+
+### Caso 3
+
+Entrada:
 
 ```
 n = 4
 ```
 
-### Resultado
+Resultado:
 
 ```
 AssertionError:
@@ -356,7 +587,17 @@ assert 0 <= i <= n and s == i * (i + 1) // 2
 
 correspondente à manutenção do invariante.
 
-Na primeira iteração temos:
+---
+
+## Demonstração da Falha
+
+Considere a entrada:
+
+```
+n = 4
+```
+
+Inicialmente:
 
 ```
 s = 0
@@ -367,23 +608,39 @@ O algoritmo executa:
 
 ```python
 s = s + i
-i = i + 1
 ```
 
 obtendo:
 
 ```
 s = 0
+```
+
+Em seguida:
+
+```python
+i = i + 1
+```
+
+obtendo:
+
+```
 i = 1
 ```
 
 Nesse momento o invariante exige:
 
 ```
+s = 1(1 + 1)/2
+```
+
+ou seja:
+
+```
 s = 1
 ```
 
-Porém:
+Entretanto:
 
 ```
 s = 0
@@ -395,44 +652,62 @@ Logo:
 0 ≠ 1
 ```
 
-e a assertiva dispara um `AssertionError`.
+Portanto o invariante é violado.
 
 ---
 
-## Razão da Falha
+## Razão Matemática do Bug
 
-O erro ocorre porque o acumulador é atualizado utilizando o valor antigo de `i`.
+O erro ocorre porque a atualização do acumulador utiliza o valor antigo de i.
 
-Na primeira repetição é realizada a operação:
+Na primeira iteração o algoritmo realiza:
 
 ```
 0 + 0
 ```
 
-quando deveria ser considerada a próxima parcela da sequência.
+quando deveria estar considerando o próximo elemento da sequência.
 
-Como consequência, o valor acumulado deixa de representar corretamente a soma dos números processados, fazendo com que o invariante seja violado já na primeira iteração.
+Como consequência, a soma acumulada deixa de representar corretamente os números processados.
+
+A propriedade de manutenção do invariante é quebrada já na primeira passagem pelo laço.
+
+---
+
+## Relação com Indução Fraca
+
+O invariante funciona como uma hipótese de indução.
+
+Se ele é verdadeiro antes da iteração k, deveria continuar verdadeiro após a iteração k + 1.
+
+Entretanto, o bug faz com que essa propriedade não seja preservada.
+
+Assim, a prova indutiva falha exatamente no passo de manutenção do invariante.
 
 ---
 
 ## Conclusão
 
-A utilização de assertivas permitiu identificar automaticamente uma falha de correção no algoritmo.
+As assertivas permitiram identificar automaticamente uma falha de correção no algoritmo.
 
-A função variante continua diminuindo normalmente, demonstrando que a terminação do laço não é o problema. O erro está na atualização incorreta das variáveis dentro do corpo do algoritmo, o que faz com que o invariante deixe de ser satisfeito e o resultado produzido seja incorreto.
+A função variante continua diminuindo normalmente, demonstrando que não existe problema de terminação.
+
+O erro está exclusivamente na atualização incorreta das variáveis dentro do laço, o que faz com que o invariante deixe de ser preservado e o resultado produzido deixe de satisfazer a especificação matemática.
 
 ---
 
 ## Como Executar
 
-Execute os arquivos pelo terminal:
+No terminal, execute:
 
 ```bash
 python problema6.py
 ```
 
+ou
+
 ```bash
 python ProblemaAlternativo.py
 ```
 
-Os programas executarão os testes definidos e exibirão as mensagens geradas pelas assertivas.
+Os programas executarão os testes e exibirão as mensagens produzidas pelas assertivas.
